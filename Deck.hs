@@ -19,7 +19,7 @@ newDeck = [(x, y) | x <- [minBound..maxBound], y <- [minBound..maxBound]]
 {-
 - Uses a random generator to return a random permutation of [a]
 -}
-shuffle :: StdGen -> Deck -> Deck
+shuffle :: StdGen -> [a] -> [a]
 shuffle _ [] = []
 shuffle gen xs = let (n,newGen) = randomR (0, length xs - 1) gen
                      front = xs !! n
