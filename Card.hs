@@ -1,7 +1,9 @@
 module Card (
   Suit(..),
   Value(..),
-  Card(..)
+  Card(..),
+  getValue,
+  getSuit
 ) where
 
 data Suit = Club | Diamond | Spade | Heart
@@ -29,3 +31,9 @@ data Value = Two
            deriving (Eq, Ord, Bounded, Enum, Show, Read)
 
 type Card = (Value,Suit)
+
+getValue :: Card -> Value
+getValue x = fst x
+
+getSuit :: Card -> Suit
+getSuit x = snd x
