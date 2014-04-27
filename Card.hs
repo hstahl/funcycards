@@ -7,13 +7,7 @@ module Card (
 ) where
 
 data Suit = Club | Diamond | Spade | Heart
-            deriving (Bounded, Enum, Show, Read)
-
-instance Eq Suit where
-    x == y = True
-
-instance Ord Suit where
-    x <= y = True
+            deriving (Eq, Bounded, Enum, Show, Read)
 
 data Value = Two
            | Three
