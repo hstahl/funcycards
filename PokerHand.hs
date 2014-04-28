@@ -9,7 +9,6 @@ module PokerHand (
   HandCateg(..),
   compareHands,
   evaluateHand,
-  highCardValue
 ) where
 
 import Data.List
@@ -150,7 +149,3 @@ values xs = [getValue x | x <- xs]
 
 suits :: Hand -> [Suit]
 suits xs = [getSuit x | x <- xs]
-
-highCardValue :: Hand -> Value
-highCardValue [] = error "Empty hand"
-highCardValue xs = maximum [getValue x | x <- xs]
