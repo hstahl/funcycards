@@ -33,7 +33,7 @@ data HandCateg = HighCard
 
 {-
  - Does a "deep" compare of two hands by checking the
- - category first and, if it is equal, looks at face values.
+ - categories first and, if they are equal, looks at face values.
  -}
 compareHands :: Hand -> Hand -> Ordering
 compareHands [] [] = EQ
