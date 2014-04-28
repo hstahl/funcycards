@@ -47,10 +47,14 @@ evaluateHand xs
         isThreeKind xs = xOfKind 3 xs
         isTwoPair xs   = sort [length l | l <- group (sort (values xs))] == [1,2,2]
         isPair xs      = xOfKind 2 xs
-        values xs      = [getValue x | x <- xs]
-        suits xs       = [getSuit x | x <- xs]
         sorting x y    = if getValue x < (getValue y) then LT else if getValue x > (getValue y) then GT else EQ
         xOfKind n xs   = maximum [length l | l <- (group (sort (values xs)))] == n
+
+values :: Hand -> [Value]
+values xs = [getValue x | x <- xs]
+
+suits :: Hand -> [Suit]
+suits xs = [getSuit x | x <- xs]
 
 highCardValue :: Hand -> Value
 highCardValue [] = error "Empty hand"
