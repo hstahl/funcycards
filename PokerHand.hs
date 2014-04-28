@@ -1,3 +1,9 @@
+{-
+ - This file is a part of the funcycards project.
+ -
+ - PokerHand is a 5-card hand in a poker game. This module
+ - enables comparing hands to determine a winner.
+ -}
 module PokerHand (
   Hand(..),
   HandCateg(..),
@@ -11,6 +17,9 @@ import Card
 
 type Hand = [Card]
 
+{-
+ - The winning categories of poker hands
+ -}
 data HandCateg = HighCard
                | Pair
                | TwoPair
@@ -23,6 +32,10 @@ data HandCateg = HighCard
                | RoyalFlush
                deriving (Eq, Ord, Bounded, Enum, Show, Read)
 
+{-
+ - Does a "deep" compare of two hands by checking the
+ - category first and, if it is equal, looks at face values.
+ -}
 compareHands :: Hand -> Hand -> Ordering
 compareHands [] [] = EQ
 compareHands xs [] = GT
@@ -62,7 +75,7 @@ compareHighCards xs ys
  - compareSortedValues.
  -
  - See: compareSortedValues
--}
+ -}
 compareNOfKind :: Int -> Hand -> Hand -> Ordering
 compareNOfKind _ [] [] = EQ
 compareNOfKind _ xs [] = GT
@@ -76,6 +89,11 @@ compareNOfKind n xs ys
         valOfKind xs = [head x | x <- (group xs), length x == n]
         valHigh xs = [head x | x <- (group xs), length x == 1]
 
+{-
+ - Two full houses are compared by looking at the values of
+ - the three-of-a-kind part and, if it is equal, then the
+ - pair part.
+ -}
 compareFullHouse :: Hand -> Hand -> Ordering
 compareFullHouse [] [] = EQ
 compareFullHouse xs [] = GT
@@ -84,6 +102,9 @@ compareFullHouse xs ys
     | compareNOfKind 3 xs ys /= EQ = compareNOfKind 2 xs ys
     | otherwise = compareNOfKind 3 xs ys
 
+{-
+ - Compares two pre-sorted lists of values.
+ -}
 compareSortedValues :: [Value] -> [Value] -> Ordering
 compareSortedValues [] [] = EQ
 compareSortedValues xs [] = GT
@@ -92,6 +113,10 @@ compareSortedValues xs ys
     | head xs == head ys = compareSortedValues (tail xs) (tail ys)
     | otherwise = (head xs) `compare` (head ys)
 
+{-
+ - Returns the winning category of a hand. Only defined
+ - for a hand of 5 cards.
+ -}
 evaluateHand :: Hand -> HandCateg
 evaluateHand [] = error "Empty hand"
 evaluateHand xs
