@@ -108,17 +108,17 @@ evaluateHand xs
     where
         isRoyal xs     = isStrFlush xs && ((maximum (values xs)) == Ace)
         isStrFlush xs  = isFlush xs && isStraight xs
-        isFourKind xs  = xOfKind 4 xs
+        isFourKind xs  = nOfKind 4 xs
         isFullHouse xs = let list = [length l | l <- group (sort (values xs))]
                          in  2 `elem` list && 3 `elem` list
         isFlush (x:xs) = foldl (\acc y -> if getSuit x /= y then False else acc) True (suits xs)
         isStraight [x] = True
         isStraight xs  = if length (values xs) == length (nub (values xs)) && succ (head (sort (values xs))) `elem` (values xs) then isStraight (tail (sortBy sorting xs)) else False
-        isThreeKind xs = xOfKind 3 xs
+        isThreeKind xs = nOfKind 3 xs
         isTwoPair xs   = sort [length l | l <- group (sort (values xs))] == [1,2,2]
-        isPair xs      = xOfKind 2 xs
+        isPair xs      = nOfKind 2 xs
         sorting x y    = if getValue x < (getValue y) then LT else if getValue x > (getValue y) then GT else EQ
-        xOfKind n xs   = maximum [length l | l <- (group (sort (values xs)))] == n
+        nOfKind n xs   = maximum [length l | l <- (group (sort (values xs)))] == n
 
 values :: Hand -> [Value]
 values xs = [getValue x | x <- xs]
