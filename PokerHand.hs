@@ -61,8 +61,8 @@ compareHighCards xs ys
     | last valx /= last valy = (last valx) `compare` (last valy)
     | otherwise = compareHighCards (init xs) (init ys)
     where
-        valx = sort (values xs)
-        valy = sort (values ys)
+        valx = sort $ values xs
+        valy = sort $ values ys
 
 {-
  - Compares the n-of-a-kind hands of two players. The one who has
@@ -83,10 +83,10 @@ compareNOfKind n xs ys
     | valOfKind valx /= valOfKind valy = (valOfKind valx) `compareSortedValues` (valOfKind valy)
     | otherwise = (valHigh valx) `compareSortedValues` (valHigh valy)
     where
-        valx = sort (values xs)
-        valy = sort (values ys)
-        valOfKind xs = [head x | x <- (group xs), length x == n]
-        valHigh xs = [head x | x <- (group xs), length x == 1]
+        valx = sort $ values xs
+        valy = sort $ values ys
+        valOfKind xs = [head x | x <- group xs, length x == n]
+        valHigh xs = [head x | x <- group xs, length x == 1]
 
 {-
  - Two full houses are compared by looking at the values of
@@ -130,19 +130,19 @@ evaluateHand xs
     | isPair xs       = Pair
     | otherwise       = HighCard
     where
-        isRoyal xs     = isStrFlush xs && ((maximum (values xs)) == Ace)
+        isRoyal xs     = isStrFlush xs && (maximum . values) xs == Ace
         isStrFlush xs  = isFlush xs && isStraight xs
         isFourKind xs  = nOfKind 4 xs
-        isFullHouse xs = let list = [length l | l <- group (sort (values xs))]
+        isFullHouse xs = let list = [length l | l <- (group . sort . values) xs]
                          in  2 `elem` list && 3 `elem` list
-        isFlush (x:xs) = foldl (\acc y -> if getSuit x /= y then False else acc) True (suits xs)
+        isFlush (x:xs) = foldl (\acc y -> if getSuit x /= y then False else acc) True $ suits xs
         isStraight [x] = True
-        isStraight xs  = if length (values xs) == length (nub (values xs)) && succ (head (sort (values xs))) `elem` (values xs) then isStraight (tail (sortBy sorting xs)) else False
+        isStraight xs  = if length (values xs) == (length . nub . values) xs && (succ . head . sort . values) xs `elem` (values xs) then (isStraight . tail . sortBy sorting ) xs else False
         isThreeKind xs = nOfKind 3 xs
-        isTwoPair xs   = sort [length l | l <- group (sort (values xs))] == [1,2,2]
+        isTwoPair xs   = sort [length l | l <- (group . sort . values) xs] == [1,2,2]
         isPair xs      = nOfKind 2 xs
         sorting x y    = if getValue x < (getValue y) then LT else if getValue x > (getValue y) then GT else EQ
-        nOfKind n xs   = maximum [length l | l <- (group (sort (values xs)))] == n
+        nOfKind n xs   = maximum [length l | l <- (group . sort . values) xs] == n
 
 values :: Hand -> [Value]
 values xs = [getValue x | x <- xs]
