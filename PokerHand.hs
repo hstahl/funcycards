@@ -100,8 +100,11 @@ compareFullHouse [] [] = EQ
 compareFullHouse xs [] = GT
 compareFullHouse [] ys = LT
 compareFullHouse xs ys
-    | compareNOfKind 3 xs ys /= EQ = compareNOfKind 2 xs ys
-    | otherwise = compareNOfKind 3 xs ys
+    | three xs /= three ys = (three xs) `compare` (three ys)
+    | otherwise            = (two xs) `compare` (two ys)
+    where
+        three xs = [head x | x <- (group . sort . values) xs, length x == 3]
+        two xs = [head x | x <- (group . sort . values) xs, length x == 2]
 
 {-
  - Compares two pre-sorted lists of values.
