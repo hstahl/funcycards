@@ -3,7 +3,8 @@ module Card (
   Value(..),
   Card(..),
   getValue,
-  getSuit
+  getSuit,
+  sorting
 ) where
 
 data Suit = Club | Diamond | Spade | Heart
@@ -31,3 +32,10 @@ getValue x = fst x
 
 getSuit :: Card -> Suit
 getSuit x = snd x
+
+{-
+ - An Ordering for cards. Cards are ordered by face value.
+ - Card of the same value and different suit are equal.
+ -}
+sorting :: Card -> Card -> Ordering
+sorting xs ys = if getValue xs < (getValue ys) then LT else if getValue xs > (getValue ys) then GT else EQ

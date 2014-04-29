@@ -8,7 +8,7 @@ module PokerHand (
   Hand(..),
   HandCateg(..),
   compareHands,
-  evaluateHand,
+  evaluateHand
 ) where
 
 import Data.List
@@ -59,10 +59,12 @@ compareHighCards xs [] = GT
 compareHighCards [] ys = LT
 compareHighCards xs ys
     | last valx /= last valy = (last valx) `compare` (last valy)
-    | otherwise = compareHighCards (init xs) (init ys)
+    | otherwise = compareHighCards (init ordx) (init ordy)
     where
-        valx = sort $ values xs
-        valy = sort $ values ys
+        ordx = sortBy sorting xs
+        ordy = sortBy sorting ys
+        valx = values ordx
+        valy = values ordy
 
 {-
  - Compares the n-of-a-kind hands of two players. The one who has
@@ -141,7 +143,6 @@ evaluateHand xs
         isThreeKind xs = nOfKind 3 xs
         isTwoPair xs   = sort [length l | l <- (group . sort . values) xs] == [1,2,2]
         isPair xs      = nOfKind 2 xs
-        sorting x y    = if getValue x < (getValue y) then LT else if getValue x > (getValue y) then GT else EQ
         nOfKind n xs   = maximum [length l | l <- (group . sort . values) xs] == n
 
 values :: Hand -> [Value]
