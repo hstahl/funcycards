@@ -12,9 +12,9 @@ module PokerHand (
 ) where
 
 import Data.List
-import Card
+import qualified Card
 
-type Hand = [Card]
+type Hand = [Card.Card]
 
 {-
  - The winning categories of poker hands
@@ -61,8 +61,8 @@ compareHighCards xs ys
     | last valx /= last valy = (last valx) `compare` (last valy)
     | otherwise = compareHighCards (init ordx) (init ordy)
     where
-        ordx = sortBy sorting xs
-        ordy = sortBy sorting ys
+        ordx = sortBy Card.sorting xs
+        ordy = sortBy Card.sorting ys
         valx = values ordx
         valy = values ordy
 
@@ -106,7 +106,7 @@ compareFullHouse xs ys
 {-
  - Compares two pre-sorted lists of values.
  -}
-compareSortedValues :: [Value] -> [Value] -> Ordering
+compareSortedValues :: [Card.Value] -> [Card.Value] -> Ordering
 compareSortedValues [] [] = EQ
 compareSortedValues xs [] = GT
 compareSortedValues [] ys = LT
@@ -132,21 +132,21 @@ evaluateHand xs
     | isPair xs       = Pair
     | otherwise       = HighCard
     where
-        isRoyal xs     = isStrFlush xs && (maximum . values) xs == Ace
+        isRoyal xs     = isStrFlush xs && (maximum . values) xs == Card.Ace
         isStrFlush xs  = isFlush xs && isStraight xs
         isFourKind xs  = nOfKind 4 xs
         isFullHouse xs = let list = [length l | l <- (group . sort . values) xs]
                          in  2 `elem` list && 3 `elem` list
-        isFlush (x:xs) = foldl (\acc y -> if getSuit x /= y then False else acc) True $ suits xs
+        isFlush (x:xs) = foldl (\acc y -> if Card.getSuit x /= y then False else acc) True $ suits xs
         isStraight [x] = True
-        isStraight xs  = if length (values xs) == (length . nub . values) xs && (succ . head . sort . values) xs `elem` (values xs) then (isStraight . tail . sortBy sorting ) xs else False
+        isStraight xs  = if length (values xs) == (length . nub . values) xs && (succ . head . sort . values) xs `elem` (values xs) then (isStraight . tail . sortBy Card.sorting ) xs else False
         isThreeKind xs = nOfKind 3 xs
         isTwoPair xs   = sort [length l | l <- (group . sort . values) xs] == [1,2,2]
         isPair xs      = nOfKind 2 xs
         nOfKind n xs   = maximum [length l | l <- (group . sort . values) xs] == n
 
-values :: Hand -> [Value]
-values xs = [getValue x | x <- xs]
+values :: Hand -> [Card.Value]
+values xs = [Card.getValue x | x <- xs]
 
-suits :: Hand -> [Suit]
-suits xs = [getSuit x | x <- xs]
+suits :: Hand -> [Card.Suit]
+suits xs = [Card.getSuit x | x <- xs]
