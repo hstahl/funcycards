@@ -59,7 +59,7 @@ compareHighCards xs [] = GT
 compareHighCards [] ys = LT
 compareHighCards xs ys
     | last valx /= last valy = (last valx) `compare` (last valy)
-    | otherwise = compareHighCards (init ordx) (init ordy)
+    | otherwise              = compareHighCards (init ordx) (init ordy)
     where
         ordx = sortBy Card.sorting xs
         ordy = sortBy Card.sorting ys
@@ -83,12 +83,12 @@ compareNOfKind _ xs [] = GT
 compareNOfKind _ [] ys = LT
 compareNOfKind n xs ys
     | valOfKind valx /= valOfKind valy = (valOfKind valx) `compareSortedValues` (valOfKind valy)
-    | otherwise = (valHigh valx) `compareSortedValues` (valHigh valy)
+    | otherwise                        = (valHigh valx) `compareSortedValues` (valHigh valy)
     where
         valx = sort $ values xs
         valy = sort $ values ys
         valOfKind xs = [head x | x <- group xs, length x == n]
-        valHigh xs = [head x | x <- group xs, length x == 1]
+        valHigh xs   = [head x | x <- group xs, length x == 1]
 
 {-
  - Two full houses are compared by looking at the values of
@@ -104,7 +104,7 @@ compareFullHouse xs ys
     | otherwise            = (two xs) `compare` (two ys)
     where
         three xs = [head x | x <- (group . sort . values) xs, length x == 3]
-        two xs = [head x | x <- (group . sort . values) xs, length x == 2]
+        two xs   = [head x | x <- (group . sort . values) xs, length x == 2]
 
 {-
  - Compares two pre-sorted lists of values.
@@ -115,7 +115,7 @@ compareSortedValues xs [] = GT
 compareSortedValues [] ys = LT
 compareSortedValues xs ys
     | head xs == head ys = compareSortedValues (tail xs) (tail ys)
-    | otherwise = (head xs) `compare` (head ys)
+    | otherwise          = (head xs) `compare` (head ys)
 
 {-
  - Returns the winning category of a hand. Only defined
@@ -124,16 +124,16 @@ compareSortedValues xs ys
 evaluateHand :: Hand -> HandCateg
 evaluateHand [] = error "Empty hand"
 evaluateHand xs
-    | isRoyal xs      = RoyalFlush
-    | isStrFlush xs   = StraightFlush
-    | isFourKind xs   = FourOfAKind
-    | isFullHouse xs  = FullHouse
-    | isFlush xs      = Flush
-    | isStraight xs   = Straight
-    | isThreeKind xs  = ThreeOfAKind
-    | isTwoPair xs    = TwoPair
-    | isPair xs       = Pair
-    | otherwise       = HighCard
+    | isRoyal xs     = RoyalFlush
+    | isStrFlush xs  = StraightFlush
+    | isFourKind xs  = FourOfAKind
+    | isFullHouse xs = FullHouse
+    | isFlush xs     = Flush
+    | isStraight xs  = Straight
+    | isThreeKind xs = ThreeOfAKind
+    | isTwoPair xs   = TwoPair
+    | isPair xs      = Pair
+    | otherwise      = HighCard
     where
         isRoyal xs     = isStrFlush xs && (maximum . values) xs == Card.Ace
         isStrFlush xs  = isFlush xs && isStraight xs
