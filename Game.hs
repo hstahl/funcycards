@@ -75,7 +75,7 @@ takeLFromDeck g [] = (g,[])
 takeLFromDeck g xi = let n = head xi
                          (newgame,cards) = takeNFromDeck g n
                          next = takeLFromDeck newgame (tail xi)
-                     in  (fst next, snd next ++ [cards])
+                     in  (fst next,[cards] ++ snd next)
 
 {-
  - Returns the player who has the best hand.
