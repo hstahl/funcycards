@@ -4,7 +4,9 @@
  - else she has, she doesn't need.
  -}
 module Player (
-  Player(..)
+  Player(..),
+  discardCards,
+  pickCards
 ) where
 
 import PokerHand
