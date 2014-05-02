@@ -7,6 +7,22 @@ module Player (
   Player(..)
 ) where
 
-import qualified PokerHand
+import PokerHand
+import Card
 
-data Player = Player {name :: String, hand :: PokerHand.Hand} deriving (Show)
+data Player = Player {name :: String, hand :: Hand} deriving (Show)
+
+{-
+ - Returns a player without the cards in the list in her hand.
+ -}
+discardCards :: [Card] -> Player -> Player
+discardCards [] p = p
+discardCards xs p = let newHand = [x | x <- hand p, not $ x `elem` xs]
+                    in  Player (name p) newHand
+
+{-
+ - Adds the cards in the list to the player's hand
+ -}
+pickCards :: [Card] -> Player -> Player
+pickCards [] p = p
+pickCards xs p = Player (name p) (hand p ++ xs)
