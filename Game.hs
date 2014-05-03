@@ -8,6 +8,7 @@
 module Game (
   Game(..),
   newGame,
+  givePlayer,
   discardThese,
   pickThese,
   takeNFromDeck,
@@ -26,13 +27,16 @@ type Game = ([Player],Deck)
 newGame :: [Player] -> Deck -> Game
 newGame xs ys = (xs,ys)
 
+givePlayer :: Game -> Int -> Player
+givePlayer g n = fst g !! n
+
 {-
  - Discards the cards in the list from the player's hands.
  - See: discardCards in Player
  -}
 discardThese :: Game -> [[Card]] -> Game
 discardThese g [] = g
-discardThese g xs = let players = [newhand i | i <- [1..length (fst g)]]
+discardThese g xs = let players = [newhand i | i <- [0..length (fst g)-1]]
                         newhand i = discardCards (xs !! i) (fst g !! i)
                     in  (players,snd g)
 
@@ -43,7 +47,7 @@ discardThese g xs = let players = [newhand i | i <- [1..length (fst g)]]
  -}
 pickThese :: Game -> [[Card]] -> Game
 pickThese g [] = g
-pickThese g xs = let players = [newhand i | i <- [1..length (fst g)]]
+pickThese g xs = let players = [newhand i | i <- [0..length (fst g)-1]]
                      newhand i = pickCards (xs !! i) (fst g !! i)
                  in  (players,snd g)
 
