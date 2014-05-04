@@ -85,4 +85,4 @@ takeLFromDeck g xi = let n = head xi
  - Returns the player who has the best hand.
  -}
 giveWinner :: [Player] -> Player
-giveWinner = head . sortBy (\a b -> hand a `compareHands` hand b)
+giveWinner = last . sortBy (\a b -> hand a `compareHands` hand b)
