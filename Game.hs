@@ -16,7 +16,7 @@ module Game (
   giveWinner
 ) where
 
-import Data.List (sortBy)
+import Data.List (sortBy, nub)
 import Card
 import Deck
 import PokerHand
@@ -82,7 +82,10 @@ takeLFromDeck g xi = let n = head xi
                      in  (fst next,[cards] ++ snd next)
 
 {-
- - Returns the player who has the best hand.
+ - Returns a list of winners. The list is only one player if there
+ - was no tie.
  -}
-giveWinner :: [Player] -> Player
-giveWinner = last . sortBy (\a b -> hand a `compareHands` hand b)
+giveWinner :: [Player] -> [Player]
+giveWinner xs = let sorted = sortBy (\a b -> hand a `compareHands` hand b)
+                    winningHand = (hand . last . sorted) xs
+                in  filter (\a -> hand a `compareHands` winningHand == EQ) xs

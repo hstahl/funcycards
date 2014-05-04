@@ -49,7 +49,12 @@ main = do
     --show final hands
     putStrLn $ printList (zipWith (\a b -> a ++ "'s Hand: " ++ show b) playernames [hand p | p <- fst refillState])
     --announce winner
-    putStrLn $ "The winner is: " ++ (name . giveWinner . fst) refillState ++ "!"
+    let winners = giveWinner (fst refillState)
+    if length winners > 1
+        then let names [x] = name x
+                 names xs  = name (head xs) ++ " & " ++ names (tail xs)
+             in  putStrLn $ "It's a tie between: " ++ names winners ++ "!"
+        else putStrLn $ "The winner is: " ++ name (head winners) ++ "!"
 
 askNames :: [String] -> IO [String]
 askNames xs = do
