@@ -16,7 +16,7 @@ module Game (
   giveWinner
 ) where
 
-import Data.List (sortBy, nub)
+import Data.List (sortBy)
 import Card
 import Deck
 import PokerHand
