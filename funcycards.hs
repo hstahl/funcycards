@@ -23,7 +23,7 @@ main = do
     --fetch a random generator
     gen <- getStdGen
     --ask player names and add to game
-    putStrLn "Player names:"
+    putStrLn "Player names (max 5):"
     playernames <- askNames []
     --show the names of the participants
     putStrLn $ printList playernames
@@ -61,7 +61,9 @@ askNames xs = do
     name <- getLine
     if null name
         then return xs
-        else askNames (xs ++ [name])
+    else if length xs >= 5
+        then return xs
+    else askNames (xs ++ [name])
 
 askDiscards :: [Player] -> IO [[Card]]
 askDiscards [] = do return [[]]
