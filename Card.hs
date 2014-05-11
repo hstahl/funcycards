@@ -3,8 +3,7 @@ module Card (
   Value(..),
   Card(..),
   getValue,
-  getSuit,
-  sorting
+  getSuit
 ) where
 
 data Suit = Club | Diamond | Spade | Heart
@@ -25,17 +24,16 @@ data Value = Two
            | Ace
            deriving (Eq, Ord, Bounded, Enum, Show, Read)
 
-type Card = (Value,Suit)
+newtype Card = Card { face :: (Value,Suit) } deriving (Eq)
+
+instance Ord Card where
+    compare a b = compare (fst (face a)) (fst (face b))
+
+instance Show Card where
+    show = show . face
 
 getValue :: Card -> Value
-getValue x = fst x
+getValue = fst . face
 
 getSuit :: Card -> Suit
-getSuit x = snd x
-
-{-
- - An Ordering for cards. Cards are ordered by face value.
- - Card of the same value and different suit are equal.
- -}
-sorting :: Card -> Card -> Ordering
-sorting xs ys = if getValue xs < (getValue ys) then LT else if getValue xs > (getValue ys) then GT else EQ
+getSuit = snd . face
