@@ -1,8 +1,9 @@
 {-
  - This file is a part of the funcycards project.
  -
- - PokerHand is a 5-card hand in a poker game. This module
+ - PokerHand is a hand in a poker game. This module
  - enables comparing hands to determine a winner.
+ - Hands of arbitrary length may be compared.
  -}
 module PokerHand (
   Hand(..),
@@ -118,8 +119,11 @@ compareSortedValues xs ys
     | otherwise          = (head xs) `compare` (head ys)
 
 {-
- - Returns the winning category of a hand. Only defined
- - for a hand of 5 cards.
+ - Returns the winning category of a hand. Defined for arbitrarily
+ - long hands. As long as the hand is at least 5 cards long, all
+ - winning categories are possible. A full house is still a hand with
+ - three of a kind and a pair, a straight is 5 cards with successive
+ - values, and a flush is at least 5 cards with the same suit.
  -}
 evaluateHand :: Hand -> HandCateg
 evaluateHand [] = error "Empty hand"
@@ -138,15 +142,19 @@ evaluateHand xs
         isRoyal xs     = isStrFlush xs && (maximum . values) xs == Card.Ace
         isStrFlush xs  = isFlush xs && isStraight xs
         isFourKind xs  = nOfKind 4 xs
-        isFullHouse xs = let list = [length l | l <- (group . sort . values) xs]
+        isFullHouse xs = let list = (map length . group . sort . values) xs
                          in  2 `elem` list && 3 `elem` list
-        isFlush (x:xs) = foldl (\acc y -> if Card.getSuit x /= y then False else acc) True $ suits xs
-        isStraight [x] = True
-        isStraight xs  = if length (values xs) == (length . nub . values) xs && (succ . head . sort . values) xs `elem` (values xs) then (isStraight . tail . sort ) xs else False
+        isFlush xs     = (maximum . map length . group . sort . suits) xs >= 5
+        isStraight xs  = let vals = (sort . nub . values) xs
+                         in fst $ foldl (\(result,count) x ->
+                                            if count == 5 then (True,count)
+                                            else if x == Card.Ace then (result,count)
+                                            else if succ x `elem` vals then (result,count+1)
+                                            else (result,1)) (False,1) vals
         isThreeKind xs = nOfKind 3 xs
-        isTwoPair xs   = sort [length l | l <- (group . sort . values) xs] == [1,2,2]
+        isTwoPair xs   = (map length . group . filter (==2) . map length . group . sort . values) xs == [2]
         isPair xs      = nOfKind 2 xs
-        nOfKind n xs   = maximum [length l | l <- (group . sort . values) xs] == n
+        nOfKind n xs   = (maximum . map length . group . sort . values) xs == n
 
 values :: Hand -> [Card.Value]
 values xs = [Card.getValue x | x <- xs]

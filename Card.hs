@@ -7,7 +7,7 @@ module Card (
 ) where
 
 data Suit = Club | Diamond | Spade | Heart
-            deriving (Eq, Bounded, Enum, Show, Read)
+            deriving (Eq, Ord, Bounded, Enum, Show, Read)
 
 data Value = Two
            | Three

@@ -1,4 +1,5 @@
 import Card
+import Deck
 import PokerHand
 
 royal = [Card (King,Heart),Card (Ten,Heart),Card (Queen,Heart),Card (Jack,Heart),Card (Ace,Heart)]
@@ -23,6 +24,7 @@ flush3 = [Card (Ten,Diamond),Card (Three,Diamond),Card (Seven,Diamond),Card (Nin
 straight = [Card (Four,Club),Card (Eight,Heart),Card (Five,Heart),Card (Six,Spade),Card (Seven,Diamond)]
 straight2 = [Card (Ten,Diamond),Card (Eight,Heart),Card (Queen,Heart),Card (Nine,Club),Card (Jack,Diamond)]
 straight3 = [Card (Queen,Heart),Card (Ten,Spade),Card (Jack,Spade),Card (Eight,Diamond),Card (Nine,Club)]
+notstraight = [Card (King,Heart),Card (Ten,Spade),Card (Jack,Spade),Card (Eight,Diamond),Card (Nine,Club)]
 
 three = [Card (Six,Heart),Card (Two,Heart),Card (Six,Spade),Card (Six,Club),Card (Ten,Club)]
 three2 = [Card (Nine,Spade),Card (Ten,Heart),Card (Queen,Heart),Card (Ten,Club),Card (Ten,Diamond)]
