@@ -61,8 +61,8 @@ compareHighCards xs ys
     | last valx /= last valy = (last valx) `compare` (last valy)
     | otherwise              = compareHighCards (init ordx) (init ordy)
     where
-        ordx = sortBy Card.sorting xs
-        ordy = sortBy Card.sorting ys
+        ordx = sort xs
+        ordy = sort ys
         valx = values ordx
         valy = values ordy
 
@@ -142,7 +142,7 @@ evaluateHand xs
                          in  2 `elem` list && 3 `elem` list
         isFlush (x:xs) = foldl (\acc y -> if Card.getSuit x /= y then False else acc) True $ suits xs
         isStraight [x] = True
-        isStraight xs  = if length (values xs) == (length . nub . values) xs && (succ . head . sort . values) xs `elem` (values xs) then (isStraight . tail . sortBy Card.sorting ) xs else False
+        isStraight xs  = if length (values xs) == (length . nub . values) xs && (succ . head . sort . values) xs `elem` (values xs) then (isStraight . tail . sort ) xs else False
         isThreeKind xs = nOfKind 3 xs
         isTwoPair xs   = sort [length l | l <- (group . sort . values) xs] == [1,2,2]
         isPair xs      = nOfKind 2 xs

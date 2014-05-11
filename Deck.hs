@@ -14,7 +14,7 @@ type Deck = [Card]
 - Returns a full deck of cards as a list
 -}
 newDeck :: Deck
-newDeck = [(x, y) | x <- [minBound..], y <- [minBound..]]
+newDeck = [Card (x, y) | x <- [minBound..], y <- [minBound..]]
 
 {-
 - Uses a random generator to return a random permutation of [a]
