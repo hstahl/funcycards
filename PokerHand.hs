@@ -13,9 +13,9 @@ module PokerHand (
 ) where
 
 import Data.List
-import qualified Card
+import Card
 
-type Hand = [Card.Card]
+type Hand = [Card]
 
 {-
  - The winning categories of poker hands
@@ -110,7 +110,7 @@ compareFullHouse xs ys
 {-
  - Compares two pre-sorted lists of values.
  -}
-compareSortedValues :: [Card.Value] -> [Card.Value] -> Ordering
+compareSortedValues :: [Value] -> [Value] -> Ordering
 compareSortedValues [] [] = EQ
 compareSortedValues xs [] = GT
 compareSortedValues [] ys = LT
@@ -139,7 +139,7 @@ evaluateHand xs
     | isPair xs      = Pair
     | otherwise      = HighCard
     where
-        isRoyal xs     = isStrFlush xs && (maximum . values) xs == Card.Ace
+        isRoyal xs     = isStrFlush xs && (maximum . values) xs == Ace
         isStrFlush xs  = isFlush xs && isStraight xs
         isFourKind xs  = nOfKind 4 xs
         isFullHouse xs = let list = (map length . group . sort . values) xs
@@ -148,7 +148,7 @@ evaluateHand xs
         isStraight xs  = let vals = (sort . nub . values) xs
                          in fst $ foldl (\(result,count) x ->
                                             if count == 5 then (True,count)
-                                            else if x == Card.Ace then (result,count)
+                                            else if x == Ace then (result,count)
                                             else if succ x `elem` vals then (result,count+1)
                                             else (result,1)) (False,1) vals
         isThreeKind xs = nOfKind 3 xs
@@ -156,8 +156,8 @@ evaluateHand xs
         isPair xs      = nOfKind 2 xs
         nOfKind n xs   = (maximum . map length . group . sort . values) xs == n
 
-values :: Hand -> [Card.Value]
-values xs = [Card.getValue x | x <- xs]
+values :: Hand -> [Value]
+values xs = [getValue x | x <- xs]
 
-suits :: Hand -> [Card.Suit]
-suits xs = [Card.getSuit x | x <- xs]
+suits :: Hand -> [Suit]
+suits xs = [getSuit x | x <- xs]
