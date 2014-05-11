@@ -19,12 +19,12 @@ data Player = Player {name :: String, hand :: Hand} deriving (Show)
  -}
 discardCards :: [Card] -> Player -> Player
 discardCards [] p = p
-discardCards xs p = let newHand = [x | x <- hand p, not $ x `elem` xs]
-                    in  Player (name p) newHand
+discardCards xs p = let newHand = filter (`notElem` xs) . cards . hand $ p
+                    in  Player (name p) (Hand newHand)
 
 {-
  - Adds the cards in the list to the player's hand
  -}
 pickCards :: [Card] -> Player -> Player
 pickCards [] p = p
-pickCards xs p = Player (name p) (hand p ++ xs)
+pickCards xs p = Player (name p) $ Hand (cards (hand p) ++ xs)

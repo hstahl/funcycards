@@ -82,6 +82,6 @@ takeLFromDeck g xi = let n = head xi
  - was no tie.
  -}
 giveWinner :: [Player] -> [Player]
-giveWinner xs = let sorted = sortBy (\a b -> hand a `compareHands` hand b)
+giveWinner xs = let sorted = sortBy (\a b -> hand a `compare` hand b)
                     winningHand = (hand . last . sorted) xs
-                in  filter (\a -> hand a `compareHands` winningHand == EQ) xs
+                in  filter (\a -> hand a == winningHand) xs

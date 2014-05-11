@@ -6,16 +6,22 @@
  - Hands of arbitrary length may be compared.
  -}
 module PokerHand (
-  Hand(..),
-  HandCateg(..),
-  compareHands,
-  evaluateHand
+  Hand(..)
 ) where
 
 import Data.List
 import Card
 
-type Hand = [Card]
+newtype Hand = Hand { cards :: [Card] }
+
+instance Show Hand where
+    show h = show $ cards h
+
+instance Eq Hand where
+    a == b = sort (cards a) == sort (cards b)
+
+instance Ord Hand where
+    compare a b = compareHands a b
 
 {-
  - The winning categories of poker hands
@@ -37,24 +43,27 @@ data HandCateg = HighCard
  - categories first and, if they are equal, looks at face values.
  -}
 compareHands :: Hand -> Hand -> Ordering
-compareHands [] [] = EQ
-compareHands xs [] = GT
-compareHands [] ys = LT
-compareHands xs ys
-    | evaluateHand xs /= evaluateHand ys = (evaluateHand xs) `compare` (evaluateHand ys)
-    | otherwise = case evaluateHand xs
-                  of   HighCard      -> compareHighCards xs ys
-                       Pair          -> compareNOfKind 2 xs ys
-                       TwoPair       -> compareNOfKind 2 xs ys
-                       ThreeOfAKind  -> compareNOfKind 3 xs ys
-                       Straight      -> compareHighCards xs ys
-                       Flush         -> compareHighCards xs ys
-                       FullHouse     -> compareFullHouse xs ys
-                       FourOfAKind   -> compareNOfKind 4 xs ys
-                       StraightFlush -> compareHighCards xs ys
+compareHands x y
+    | hx == [] && hy /= [] = GT
+    | hx /= [] && hy == [] = LT
+    | hx == [] && hy == [] = EQ
+    | evaluateHand x /= evaluateHand y = (evaluateHand x) `compare` (evaluateHand y)
+    | otherwise = case evaluateHand x
+                  of   HighCard      -> compareHighCards hx hy
+                       Pair          -> compareNOfKind 2 hx hy
+                       TwoPair       -> compareNOfKind 2 hx hy
+                       ThreeOfAKind  -> compareNOfKind 3 hx hy
+                       Straight      -> compareHighCards hx hy
+                       Flush         -> compareHighCards hx hy
+                       FullHouse     -> compareFullHouse hx hy
+                       FourOfAKind   -> compareNOfKind 4 hx hy
+                       StraightFlush -> compareHighCards hx hy
                        RoyalFlush    -> EQ
+    where
+        hx = cards x
+        hy = cards y
 
-compareHighCards :: Hand -> Hand -> Ordering
+compareHighCards :: [Card] -> [Card] -> Ordering
 compareHighCards [] [] = EQ
 compareHighCards xs [] = GT
 compareHighCards [] ys = LT
@@ -78,7 +87,7 @@ compareHighCards xs ys
  -
  - See: compareSortedValues
  -}
-compareNOfKind :: Int -> Hand -> Hand -> Ordering
+compareNOfKind :: Int -> [Card] -> [Card] -> Ordering
 compareNOfKind _ [] [] = EQ
 compareNOfKind _ xs [] = GT
 compareNOfKind _ [] ys = LT
@@ -96,7 +105,7 @@ compareNOfKind n xs ys
  - the three-of-a-kind part and, if it is equal, then the
  - pair part.
  -}
-compareFullHouse :: Hand -> Hand -> Ordering
+compareFullHouse :: [Card] -> [Card] -> Ordering
 compareFullHouse [] [] = EQ
 compareFullHouse xs [] = GT
 compareFullHouse [] ys = LT
@@ -126,26 +135,25 @@ compareSortedValues xs ys
  - values, and a flush is at least 5 cards with the same suit.
  -}
 evaluateHand :: Hand -> HandCateg
-evaluateHand [] = error "Empty hand"
-evaluateHand xs
-    | isRoyal xs     = RoyalFlush
-    | isStrFlush xs  = StraightFlush
-    | isFourKind xs  = FourOfAKind
-    | isFullHouse xs = FullHouse
-    | isFlush xs     = Flush
-    | isStraight xs  = Straight
-    | isThreeKind xs = ThreeOfAKind
-    | isTwoPair xs   = TwoPair
-    | isPair xs      = Pair
-    | otherwise      = HighCard
+evaluateHand x
+    | isRoyal (cards x)     = RoyalFlush
+    | isStrFlush (cards x)  = StraightFlush
+    | isFourKind (cards x)  = FourOfAKind
+    | isFullHouse (cards x) = FullHouse
+    | isFlush (cards x)     = Flush
+    | isStraight (cards x)  = Straight
+    | isThreeKind (cards x) = ThreeOfAKind
+    | isTwoPair (cards x)   = TwoPair
+    | isPair (cards x)      = Pair
+    | otherwise     = HighCard
     where
         isRoyal xs     = isStrFlush xs && (maximum . values) xs == Ace
         isStrFlush xs  = isFlush xs && isStraight xs
         isFourKind xs  = nOfKind 4 xs
-        isFullHouse xs = let list = (map length . group . sort . values) xs
+        isFullHouse xs = let list = map length . group . sort . values $ xs
                          in  2 `elem` list && 3 `elem` list
         isFlush xs     = (maximum . map length . group . sort . suits) xs >= 5
-        isStraight xs  = let vals = (sort . nub . values) xs
+        isStraight xs  = let vals = sort . nub . values $ xs
                          in fst $ foldl (\(result,count) x ->
                                             if count == 5 then (True,count)
                                             else if x == Ace then (result,count)
@@ -156,8 +164,8 @@ evaluateHand xs
         isPair xs      = nOfKind 2 xs
         nOfKind n xs   = (maximum . map length . group . sort . values) xs == n
 
-values :: Hand -> [Value]
-values xs = [getValue x | x <- xs]
+values :: [Card] -> [Value]
+values = map getValue
 
-suits :: Hand -> [Suit]
-suits xs = [getSuit x | x <- xs]
+suits :: [Card] -> [Suit]
+suits = map getSuit
