@@ -29,7 +29,7 @@ main = do
     putStrLn $ printList playernames
     let fulldeck = shuffle gen newDeck
         --create list of players without cards
-        players = map (\x -> Player x []) playernames
+        players = map (\x -> Player x (Hand [])) playernames
         --create game
         newgame = newGame players fulldeck
         --initial state is when five cards are drawn from the deck for each player
@@ -41,7 +41,7 @@ main = do
     discardList <- askDiscards (fst discardState)
         --discarded state is when the selected cards have been removed from the players' hands
     let discardedState = discardThese discardState discardList
-        missingCards = [5 - length (hand x) | x <- fst discardedState]
+        missingCards = [5 - length (cards (hand x)) | x <- fst discardedState]
         --pick up state is when the replacement cards for discarded ones are taken from the deck
         (pickUpState,newCards) = takeLFromDeck discardedState missingCards
         --refill state is when the replacement cards are given to the players
@@ -66,10 +66,10 @@ askNames xs = do
     else askNames (xs ++ [name])
 
 askDiscards :: [Player] -> IO [[Card]]
-askDiscards [] = do return [[]]
+askDiscards [] = return []
 askDiscards xp = do
-    putStrLn $ "Which cards will you discard, " ++ (name (head xp)) ++ "?"
-    putStrLn $ printList (hand (head xp))
+    putStrLn $ "Which cards will you discard, " ++ name (head xp) ++ "?"
+    putStrLn $ printList . cards . hand . head $ xp
     line <- getLine
     let selection = words line
         intselection :: [String] -> [Int]
@@ -80,7 +80,7 @@ askDiscards xp = do
 
 giveDiscards :: Player -> [Int] -> [Card]
 giveDiscards _ [] = []
-giveDiscards p xs = hand p !! head xs : giveDiscards p (tail xs)
+giveDiscards p xs = cards (hand p) !! head xs : giveDiscards p (tail xs)
 
 printList :: (Show a) => [a] -> String
 printList = unlines . zipWith (\n a -> show n ++ " - " ++ show a) [0..]
